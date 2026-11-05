@@ -1,0 +1,8 @@
+{
+  "name": "Coaching Center",
+  "description": "Comprehensive coaching center management app for student enrollment, batches, attendance, fee tracking, and receipts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

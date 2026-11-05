@@ -1,0 +1,78 @@
+{
+  "$schema": "https://firebase.google.com/docs/firestore/blueprint-schema-v1.json",
+  "entities": {
+    "coaching_setup": {
+      "collection": "coaching_setup",
+      "fields": {
+        "setupId": { "type": "string" },
+        "userId": { "type": "string" },
+        "coachingName": { "type": "string" },
+        "createdAt": { "type": "timestamp" },
+        "updatedAt": { "type": "timestamp" }
+      },
+      "subcollections": {
+        "target_dates": {
+          "fields": {
+            "targetDateId": { "type": "string" },
+            "date": { "type": "string" },
+            "label": { "type": "string" },
+            "orderIndex": { "type": "number" },
+            "createdAt": { "type": "timestamp" }
+          }
+        },
+        "classes": {
+          "fields": {
+            "classId": { "type": "string" },
+            "classNumber": { "type": "number" },
+            "className": { "type": "string" },
+            "fullYearFee": { "type": "number" },
+            "sections": { "type": "array" },
+            "createdAt": { "type": "timestamp" },
+            "updatedAt": { "type": "timestamp" }
+          },
+          "subcollections": {
+            "target_fees": {
+              "fields": {
+                "targetDateId": { "type": "string" },
+                "targetFee": { "type": "number" },
+                "updatedAt": { "type": "timestamp" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "students": {
+      "collection": "students",
+      "fields": {
+        "studentId": { "type": "string" },
+        "setupId": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "fatherName": { "type": "string" },
+        "mainContactNumber": { "type": "string" },
+        "class": { "type": "string" },
+        "classId": { "type": "string" },
+        "section": { "type": "string" },
+        "feeStatus": { "type": "number" },
+        "dueDateLevel": { "type": "number" },
+        "currentDueDate": { "type": "string" },
+        "firstDueDate": { "type": "string" },
+        "createdAt": { "type": "timestamp" },
+        "updatedAt": { "type": "timestamp" }
+      }
+    },
+    "previous_year_pdfs": {
+      "collection": "previous_year_pdfs",
+      "fields": {
+        "archiveId": { "type": "string" },
+        "userId": { "type": "string" },
+        "sessionLabel": { "type": "string" },
+        "totalStudents": { "type": "number" },
+        "totalPendingAmount": { "type": "number" },
+        "reportDataJson": { "type": "string" },
+        "createdAt": { "type": "timestamp" }
+      }
+    }
+  }
+}
