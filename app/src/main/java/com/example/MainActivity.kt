@@ -57,7 +57,20 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        try {
+            if (com.google.firebase.FirebaseApp.getApps(this).isEmpty()) {
+                com.google.firebase.FirebaseApp.initializeApp(this)
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MainActivity", "FirebaseApp init check failed", e)
+        }
+
+        try {
+            enableEdgeToEdge()
+        } catch (e: Exception) {
+            android.util.Log.w("MainActivity", "enableEdgeToEdge skipped or failed on this device", e)
+        }
 
         setContent {
             CoachingAppTheme {

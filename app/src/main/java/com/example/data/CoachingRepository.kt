@@ -18,13 +18,37 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 
+import com.google.firebase.FirebaseApp
+
 class CoachingRepository(private val db: FirebaseFirestore) {
 
-    constructor(context: Context) : this(
-        FirebaseFirestore.getInstance(
-            context.applicationContext.getString(R.string.firestore_database_id)
-        )
-    )
+    companion object {
+        fun create(context: Context): CoachingRepository {
+            try {
+                if (FirebaseApp.getApps(context).isEmpty()) {
+                    FirebaseApp.initializeApp(context)
+                }
+            } catch (e: Exception) {
+                Log.e("CoachingRepository", "FirebaseApp init check failed", e)
+            }
+
+            val firestore = try {
+                val dbIdRes = context.resources.getIdentifier("firestore_database_id", "string", context.packageName)
+                val dbId = if (dbIdRes != 0) context.getString(dbIdRes) else ""
+                if (dbId.isNotBlank()) {
+                    FirebaseFirestore.getInstance(dbId)
+                } else {
+                    FirebaseFirestore.getInstance()
+                }
+            } catch (e: Exception) {
+                Log.w("CoachingRepository", "Custom DB init failed, fallback to default", e)
+                FirebaseFirestore.getInstance()
+            }
+            return CoachingRepository(firestore)
+        }
+    }
+
+    constructor(context: Context) : this(create(context).db)
 
     private val auth = Firebase.auth
 

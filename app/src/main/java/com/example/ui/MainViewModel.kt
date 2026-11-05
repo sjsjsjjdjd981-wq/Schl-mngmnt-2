@@ -30,13 +30,13 @@ import java.util.Locale
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = CoachingRepository(application)
-    private val auth = Firebase.auth
+    private val repository = CoachingRepository.create(application)
+    private val auth by lazy { Firebase.auth }
 
     // Authorized Teacher Account (sjsjsjjdjd981@gmail.com)
     val defaultAuthorizedEmail = "sjsjsjjdjd981@gmail.com"
 
-    private val _currentUser = MutableStateFlow<FirebaseUser?>(auth.currentUser)
+    private val _currentUser = MutableStateFlow<FirebaseUser?>(null)
     val currentUser: StateFlow<FirebaseUser?> = _currentUser.asStateFlow()
 
     private val _isAuthorized = MutableStateFlow(true)
@@ -71,19 +71,27 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val selectedDueLevel = MutableStateFlow(0) // Default to Level 0
 
     init {
-        auth.addAuthStateListener { firebaseAuth ->
-            val user = firebaseAuth.currentUser
-            _currentUser.value = user
-            if (user != null) {
-                // If user matches authorized email or any first user
-                _isAuthorized.value = true
-                loadUserData(user.uid)
-            } else {
-                _targetDates.value = emptyList()
-                _classes.value = emptyList()
-                _students.value = emptyList()
-                _archives.value = emptyList()
+        try {
+            _currentUser.value = auth.currentUser
+            auth.addAuthStateListener { firebaseAuth ->
+                try {
+                    val user = firebaseAuth.currentUser
+                    _currentUser.value = user
+                    if (user != null) {
+                        _isAuthorized.value = true
+                        loadUserData(user.uid)
+                    } else {
+                        _targetDates.value = emptyList()
+                        _classes.value = emptyList()
+                        _students.value = emptyList()
+                        _archives.value = emptyList()
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("MainViewModel", "Error in auth listener callback", e)
+                }
             }
+        } catch (e: Exception) {
+            android.util.Log.e("MainViewModel", "Failed to initialize auth listener", e)
         }
     }
 
